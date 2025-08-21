@@ -6,6 +6,9 @@ const iframeContainer = document.getElementById("iframeContainer");
 let tabIdCounter = 0;
 let currentTab = null;
 
+// List of sites we do NOT embed (will open directly in browser)
+const blockedSites = ["google.com", "youtube.com"];
+
 function createTab(url = "https://www.google.com/webhp?igu=1&gws_rd=ssl") {
   const id = "tab-" + tabIdCounter++;
 
@@ -65,10 +68,21 @@ function removeTab(id) {
 }
 
 function replaceBrowser(url) {
-  if (!url.startsWith("http")) {
-    url = "https://www.google.com/search?q=" + encodeURIComponent(url);
+  // Ensure proper protocol
+  if (!url.startsWith("http://") && !url.startsWith("https://")) {
+    url = "https://" + url;
   }
-  document.body.innerHTML = `<iframe src="${url}" style="width:100%;height:100vh;border:none;"></iframe>`;
+
+  const isBlocked = blockedSites.some(site => url.includes(site));
+  if (isBlocked) {
+    // Open blocked sites directly
+    window.location.href = url;
+    return;
+  }
+
+  // Embed allowed sites in iframe
+  const activeFrame = document.querySelector(`iframe[data-id='${currentTab}']`);
+  if (activeFrame) activeFrame.src = url;
 }
 
 urlBar.addEventListener("keydown", e => {
