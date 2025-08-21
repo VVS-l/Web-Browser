@@ -5,19 +5,58 @@
   <title>Browser Simulator</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <style>
+    /* --- General --- */
+    body { margin:0; font-family:Arial,sans-serif; overflow:hidden; background:#f1f3f4; color:#000; }
+    .dark-mode { background:#2e2e2e; color:#f1f3f4; }
+
+    /* --- Top Bar --- */
+    .top-bar { display:flex; align-items:center; background:#e0e0e0; height:36px; padding:0 5px; border-bottom:1px solid #ccc; position:relative; }
+    .tabs { display:flex; flex:1; overflow-x:auto; }
+    .tab { background:#d6d6d6; border-radius:6px 6px 0 0; padding:5px 10px; margin-right:4px; display:flex; align-items:center; cursor:pointer; user-select:none; }
+    .tab.active { background:white; border:1px solid #ccc; border-bottom:none; }
+    .tab span { margin-right:6px; }
+    .tab .close { font-size:12px; cursor:pointer; }
+    .new-tab { padding:5px 8px; cursor:pointer; font-weight:bold; font-size:16px; }
+    .time-display { margin-left:auto; font-size:12px; font-weight:bold; }
+    .settings-btn { margin-left:10px; background:none; border:none; cursor:pointer; font-size:18px; }
+
+    /* --- Settings Panel --- */
+    .settings-panel { position:absolute; top:40px; right:10px; background:#f8f9fa; border:1px solid #ccc; padding:15px; border-radius:8px; box-shadow:2px 2px 10px rgba(0,0,0,0.2); display:none; z-index:1000; }
+    .settings-panel h3 { margin-top:0; }
+    .setting-item { margin-bottom:10px; }
+
+    /* --- Nav Bar --- */
+    .nav-bar { display:flex; align-items:center; background:#f1f3f4; padding:5px; border-bottom:1px solid #ccc; }
+    .nav-bar .nav-btn { background:none; border:none; cursor:pointer; margin-right:8px; font-size:16px; }
+    .search-bar { flex:1; height:26px; padding:0 8px; border:1px solid #ccc; border-radius:14px; outline:none; }
+
+    /* --- Bookmarks --- */
+    .bookmarks { background:#f8f9fa; border-bottom:1px solid #ccc; padding:4px 8px; display:flex; gap:10px; align-items:center; }
+    .bookmark { display:flex; align-items:center; font-size:14px; cursor:pointer; padding:6px 12px; border-radius:8px; background:linear-gradient(145deg,#ffffff,#dcdcdc); box-shadow:2px 2px 6px rgba(0,0,0,0.15),-2px -2px 6px #fff; transition:all 0.2s ease-in-out; }
+    .bookmark:hover { transform:translateY(-2px); box-shadow:4px 4px 8px rgba(0,0,0,0.2),-3px -3px 8px #fff; }
+
+    /* --- Iframes --- */
+    .iframe-container iframe { width:100%; height:calc(100vh - 110px); border:none; display:none; }
+    .iframe-container iframe.active { display:block; }
+
+    /* --- Music Tab --- */
+    .music-tab { padding:10px; display:none; }
+    .music-tab h3 { margin:0 0 10px 0; }
+    .music-tab input { padding:5px; border-radius:5px; border:1px solid #ccc; width:70%; margin-right:5px; }
+    .music-tab button { padding:5px 10px; border:none; border-radius:5px; background:#4CAF50; color:white; cursor:pointer; }
+    .music-tab button:hover { background:#45a049; }
+    .music-tab iframe { margin-top:10px; width:100%; height:380px; border:none; }
+  </style>
 </head>
 <body>
 
-  <!-- Top bar with tabs -->
+  <!-- Top Bar -->
   <div class="top-bar">
     <div class="tabs" id="tabs"></div>
-
     <div class="new-tab" id="newTab"><span class="material-symbols-outlined">add</span></div>
-
     <div class="time-display" id="timeDisplay"></div>
-    <button class="settings-btn" onclick="toggleSettings()">
-      <span class="material-symbols-outlined">settings</span>
-    </button>
+    <button class="settings-btn" onclick="toggleSettings()"><span class="material-symbols-outlined">settings</span></button>
   </div>
 
   <!-- Settings Panel -->
@@ -43,15 +82,15 @@
     </div>
   </div>
 
-  <!-- Navigation + Search -->
+  <!-- Nav + Search -->
   <div class="nav-bar">
-    <button class="nav-btn" onclick="goBack()"><span class="material-symbols-outlined">arrow_back</span></button>
-    <button class="nav-btn" onclick="goForward()"><span class="material-symbols-outlined">arrow_forward</span></button>
-    <button class="nav-btn" onclick="reload()"><span class="material-symbols-outlined">refresh</span></button>
+    <button class="nav-btn" onclick="goBack()">&#8592;</button>
+    <button class="nav-btn" onclick="goForward()">&#8594;</button>
+    <button class="nav-btn" onclick="reload()">&#x21bb;</button>
     <input type="text" class="search-bar" id="url" placeholder="Search or enter URL">
   </div>
 
-  <!-- Bookmarks bar -->
+  <!-- Bookmarks -->
   <div class="bookmarks">
     <div class="bookmark" onclick="replaceBrowser('https://www.google.com/webhp?igu=1&gws_rd=ssl')">
       <span class="material-symbols-outlined">star</span> Google
@@ -59,65 +98,147 @@
     <div class="bookmark" onclick="openFakeBookmark()">
       <span class="material-symbols-outlined">add</span> New Bookmark
     </div>
+    <div class="bookmark" onclick="openMusicTab()">
+      <span class="material-symbols-outlined">music_note</span> Music
+    </div>
   </div>
 
-  <!-- Display sites -->
+  <!-- Iframes -->
   <div class="iframe-container" id="iframeContainer"></div>
 
-  <script src="script.js"></script>
+  <!-- Music Tab -->
+  <div id="musicTab" class="music-tab">
+    <h3>Music Player</h3>
+    <input type="text" id="spotifyUrl" placeholder="Paste Spotify Playlist URL">
+    <button onclick="loadSpotify()">Load Playlist</button>
+    <div id="spotifyPlayer"></div>
+  </div>
+
   <script>
+    // --- Tabs & Browser ---
+    const tabs = document.getElementById("tabs");
+    const newTabBtn = document.getElementById("newTab");
+    const urlBar = document.getElementById("url");
+    const iframeContainer = document.getElementById("iframeContainer");
+    const musicTab = document.getElementById("musicTab");
+
+    let tabIdCounter = 0;
+    let currentTab = null;
+    const blockedSites = ["google.com", "youtube.com"];
+
+    function createTab(url = "https://www.google.com/webhp?igu=1&gws_rd=ssl") {
+      const id = "tab-" + tabIdCounter++;
+      const tab = document.createElement("div");
+      tab.className = "tab";
+      tab.dataset.id = id;
+      tab.innerHTML = `<span>New Tab</span> <div class='close'>✕ </div>`;
+      tabs.appendChild(tab);
+
+      const iframe = document.createElement("iframe");
+      iframe.src = url;
+      iframe.dataset.id = id;
+      iframeContainer.appendChild(iframe);
+
+      tab.addEventListener("click", () => setActiveTab(id));
+      tab.querySelector(".close").addEventListener("click", e => { e.stopPropagation(); removeTab(id); });
+
+      setActiveTab(id);
+    }
+
+    function setActiveTab(id) {
+      document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".iframe-container iframe").forEach(f => f.classList.remove("active"));
+      musicTab.style.display = "none";
+
+      const activeTab = document.querySelector(`.tab[data-id='${id}']`);
+      const activeFrame = document.querySelector(`iframe[data-id='${id}']`);
+      if (activeTab && activeFrame) {
+        activeTab.classList.add("active");
+        activeFrame.classList.add("active");
+        urlBar.value = activeFrame.src;
+        currentTab = id;
+      }
+    }
+
+    function removeTab(id) {
+      const tab = document.querySelector(`.tab[data-id='${id}']`);
+      const frame = document.querySelector(`iframe[data-id='${id}']`);
+      if (tab) tab.remove();
+      if (frame) frame.remove();
+
+      if (currentTab === id) {
+        const remaining = document.querySelector(".tab");
+        if (remaining) setActiveTab(remaining.dataset.id);
+        else createTab();
+      }
+    }
+
+    function replaceBrowser(url) {
+      if (!url.startsWith("http://") && !url.startsWith("https://")) url = "https://" + url;
+      const isBlocked = blockedSites.some(site => url.includes(site));
+      if (isBlocked) { window.location.href = url; return; }
+
+      const activeFrame = document.querySelector(`iframe[data-id='${currentTab}']`);
+      if (activeFrame) activeFrame.src = url;
+    }
+
+    newTabBtn.addEventListener("click", () => createTab());
+    urlBar.addEventListener("keydown", e => { if(e.key === "Enter") replaceBrowser(urlBar.value); });
+
+    function reload() {
+      const activeFrame = document.querySelector(`iframe[data-id='${currentTab}']`);
+      if (activeFrame) activeFrame.src = activeFrame.src;
+    }
+
+    function goBack() { alert("Cross-origin pages cannot go back."); }
+    function goForward() { alert("Cross-origin pages cannot go forward."); }
+
     // --- Bookmarks ---
     function openFakeBookmark() {
       const url = prompt('Enter a URL to visit:', 'https://');
-      if (url) replaceBrowser(url);
+      if(url) window.location.href = url; // replaces whole browser
+    }
+
+    // --- Music Tab ---
+    function openMusicTab() {
+      musicTab.style.display = "block";
+      document.querySelectorAll(".iframe-container iframe").forEach(f => f.classList.remove("active"));
+    }
+
+    function loadSpotify() {
+      const urlInput = document.getElementById("spotifyUrl").value;
+      const match = urlInput.match(/playlist\/([a-zA-Z0-9]+)(\?si=.*)?$/);
+      if(!match){ alert('Invalid Spotify playlist URL'); return; }
+      const playlistId = match[1];
+      const embedUrl = `https://open.spotify.com/embed/playlist/${playlistId}`;
+      document.getElementById("spotifyPlayer").innerHTML = `<iframe src="${embedUrl}" allow="encrypted-media" allowtransparency="true"></iframe>`;
     }
 
     // --- Clock ---
-    let clockFormat = 24;
+    let clockFormat = 12; // default 12-hour
     let showSeconds = true;
-
-    function updateClock() {
+    function updateClock(){
       const now = new Date();
       let hours = now.getHours();
       let minutes = now.getMinutes().toString().padStart(2,'0');
       let seconds = now.getSeconds().toString().padStart(2,'0');
       let period = '';
-
-      if(clockFormat === 12){
-        period = hours >= 12 ? ' PM' : ' AM';
-        hours = hours % 12 || 12;
-      }
-
+      if(clockFormat===12){ period = hours>=12?' PM':' AM'; hours = hours%12||12; }
       let timeStr = `${hours.toString().padStart(2,'0')}:${minutes}`;
       if(showSeconds) timeStr += `:${seconds}`;
       timeStr += period + ' | ' + now.toLocaleDateString();
-
-      document.getElementById('timeDisplay').textContent = timeStr;
+      document.getElementById("timeDisplay").textContent = timeStr;
     }
-
-    setInterval(updateClock, 1000);
+    setInterval(updateClock,1000);
     updateClock();
 
-    // --- Settings Panel ---
-    function toggleSettings() {
-      const panel = document.getElementById('settingsPanel');
-      panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
-    }
+    // --- Settings ---
+    function toggleSettings() { const panel = document.getElementById('settingsPanel'); panel.style.display = panel.style.display==='block'?'none':'block'; }
+    function changeTheme(theme){ document.body.classList.toggle('dark-mode', theme==='dark'); }
+    function updateClockSettings(){ clockFormat=parseInt(document.getElementById('clockFormat').value); showSeconds=document.getElementById('showSeconds').checked; updateClock(); }
 
-    function changeTheme(theme){
-      const body = document.body;
-      if(theme==='dark'){
-        body.classList.add('dark-mode');
-      } else {
-        body.classList.remove('dark-mode');
-      }
-    }
-
-    function updateClockSettings(){
-      clockFormat = parseInt(document.getElementById('clockFormat').value);
-      showSeconds = document.getElementById('showSeconds').checked;
-      updateClock();
-    }
+    // --- Open first tab ---
+    createTab();
   </script>
 </body>
 </html>
