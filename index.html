@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Browser Simulator</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- Top bar with tabs -->
+  <div class="top-bar">
+    <div class="tabs" id="tabs"></div>
+
+    <div class="new-tab" id="newTab"><span class="material-symbols-outlined">add</span></div>
+
+    <div class="time-display" id="timeDisplay"></div>
+    <button class="settings-btn" onclick="toggleSettings()">
+      <span class="material-symbols-outlined">settings</span>
+    </button>
+  </div>
+
+  <!-- Settings Panel -->
+  <div id="settingsPanel" class="settings-panel">
+    <h3>Browser Settings</h3>
+    <div class="setting-item">
+      <label>Theme:</label>
+      <select id="themeSelect" onchange="changeTheme(this.value)">
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </div>
+    <div class="setting-item">
+      <label>Clock Format:</label>
+      <select id="clockFormat" onchange="updateClockSettings()">
+        <option value="24">24-hour</option>
+        <option value="12">12-hour</option>
+      </select>
+    </div>
+    <div class="setting-item">
+      <label>Show Seconds:</label>
+      <input type="checkbox" id="showSeconds" onchange="updateClockSettings()" checked>
+    </div>
+  </div>
+
+  <!-- Navigation + Search -->
+  <div class="nav-bar">
+    <button class="nav-btn" onclick="goBack()"><span class="material-symbols-outlined">arrow_back</span></button>
+    <button class="nav-btn" onclick="goForward()"><span class="material-symbols-outlined">arrow_forward</span></button>
+    <button class="nav-btn" onclick="reload()"><span class="material-symbols-outlined">refresh</span></button>
+    <input type="text" class="search-bar" id="url" placeholder="Search or enter URL">
+  </div>
+
+  <!-- Bookmarks bar -->
+  <div class="bookmarks">
+    <div class="bookmark" onclick="replaceBrowser('https://www.google.com/webhp?igu=1&gws_rd=ssl')">
+      <span class="material-symbols-outlined">star</span> Google
+    </div>
+    <div class="bookmark" onclick="openFakeBookmark()">
+      <span class="material-symbols-outlined">add</span> New Bookmark
+    </div>
+  </div>
+
+  <!-- Display sites -->
+  <div class="iframe-container" id="iframeContainer"></div>
+
+  <script src="script.js"></script>
+  <script>
+    // --- Bookmarks ---
+    function openFakeBookmark() {
+      const url = prompt('Enter a URL to visit:', 'https://');
+      if (url) replaceBrowser(url);
+    }
+
+    // --- Clock ---
+    let clockFormat = 24;
+    let showSeconds = true;
+
+    function updateClock() {
+      const now = new Date();
+      let hours = now.getHours();
+      let minutes = now.getMinutes().toString().padStart(2,'0');
+      let seconds = now.getSeconds().toString().padStart(2,'0');
+      let period = '';
+
+      if(clockFormat === 12){
+        period = hours >= 12 ? ' PM' : ' AM';
+        hours = hours % 12 || 12;
+      }
+
+      let timeStr = `${hours.toString().padStart(2,'0')}:${minutes}`;
+      if(showSeconds) timeStr += `:${seconds}`;
+      timeStr += period + ' | ' + now.toLocaleDateString();
+
+      document.getElementById('timeDisplay').textContent = timeStr;
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // --- Settings Panel ---
+    function toggleSettings() {
+      const panel = document.getElementById('settingsPanel');
+      panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function changeTheme(theme){
+      const body = document.body;
+      if(theme==='dark'){
+        body.classList.add('dark-mode');
+      } else {
+        body.classList.remove('dark-mode');
+      }
+    }
+
+    function updateClockSettings(){
+      clockFormat = parseInt(document.getElementById('clockFormat').value);
+      showSeconds = document.getElementById('showSeconds').checked;
+      updateClock();
+    }
+  </script>
+</body>
+</html>
