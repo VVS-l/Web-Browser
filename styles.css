@@ -1,0 +1,302 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f1f3f4;
+  overflow: hidden;
+}
+
+/* Dark Mode Styles */
+body.dark-mode {
+  background: #181818;
+  color: #e0e0e0;
+}
+
+body.dark-mode .top-bar {
+  background: #242424;
+  border-bottom: 1px solid #444;
+}
+
+body.dark-mode .nav-bar {
+  background: #242424;
+  border-bottom: 1px solid #444;
+}
+
+body.dark-mode .bookmarks {
+  background: #1f1f1f;
+  border-bottom: 1px solid #444;
+}
+
+body.dark-mode .tab {
+  background: #333;
+  color: #e0e0e0;
+}
+
+body.dark-mode .tab.active {
+  background: #1a1a1a;
+  border: 1px solid #555;
+  border-bottom: none;
+}
+
+body.dark-mode .search-bar {
+  background: #2b2b2b;
+  color: #e0e0e0;
+  border: 1px solid #555;
+}
+
+body.dark-mode .bookmark {
+  background: #2a2a2a;
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.5), -2px -2px 6px #1a1a1a;
+  color: #e0e0e0;
+}
+
+body.dark-mode .settings-panel {
+  background: #2b2b2b;
+  color: #e0e0e0;
+  border: 1px solid #555;
+}
+
+/* Icons in Dark Mode */
+body.dark-mode .material-symbols-outlined {
+  color: #e0e0e0; /* makes all icons visible in dark mode */
+}
+
+body.dark-mode .nav-bar .nav-btn span,
+body.dark-mode .settings-btn span {
+  color: #e0e0e0;
+}
+
+
+/* Top Bar (Tabs + Window Controls) */
+.top-bar {
+  display: flex;
+  align-items: center;
+  background: #e0e0e0;
+  height: 36px;
+  padding: 0 5px;
+  border-bottom: 1px solid #ccc;
+}
+
+.tabs {
+  display: flex;
+  flex: 1;
+  overflow-x: auto;
+}
+
+.tab {
+  background: #d6d6d6;
+  border-radius: 6px 6px 0 0;
+  padding: 5px 10px;
+  margin-right: 4px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.tab.active {
+  background: white;
+  border: 1px solid #ccc;
+  border-bottom: none;
+}
+
+.tab span {
+  margin-right: 6px;
+}
+
+.tab .close {
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.new-tab {
+  padding: 5px 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.window-controls {
+  display: flex;
+  gap: 4px;
+  margin-left: 8px;
+}
+
+.window-controls button {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.window-controls button:hover {
+  background: rgba(0,0,0,0.1);
+  border-radius: 3px;
+}
+
+/* Navigation + Search Bar */
+.nav-bar {
+  display: flex;
+  align-items: center;
+  background: #f1f3f4;
+  padding: 5px;
+  border-bottom: 1px solid #ccc;
+}
+
+.nav-bar .nav-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-right: 8px;
+  font-size: 16px;
+}
+
+.search-bar {
+  flex: 1;
+  height: 26px;
+  padding: 0 8px;
+  border: 1px solid #ccc;
+  border-radius: 14px;
+  outline: none;
+}
+
+/* Bookmarks bar */
+.bookmarks {
+  background: #f8f9fa;
+  border-bottom: 1px solid #ccc;
+  padding: 4px 8px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.bookmark {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: linear-gradient(145deg, #ffffff, #dcdcdc);
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.15), -2px -2px 6px #ffffff;
+  transition: all 0.2s ease-in-out;
+}
+
+.bookmark:hover {
+  transform: translateY(-2px);
+  box-shadow: 4px 4px 8px rgba(0,0,0,0.2), -3px -3px 8px #ffffff;
+}
+
+.iframe-container iframe {
+  width: 100%;
+  height: calc(100vh - 110px);
+  border: none;
+  display: none;
+}
+
+.iframe-container iframe.active {
+  display: block;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f1f3f4;
+  overflow: hidden;
+}
+
+/* Top Bar */
+.top-bar {
+  display: flex;
+  align-items: center;
+  background: #e0e0e0;
+  height: 36px;
+  padding: 0 5px;
+  border-bottom: 1px solid #ccc;
+  position: relative;
+}
+
+.tabs {
+  display: flex;
+  flex: 1;
+  overflow-x: auto;
+}
+
+.tab {
+  background: #d6d6d6;
+  border-radius: 6px 6px 0 0;
+  padding: 5px 10px;
+  margin-right: 4px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.tab.active {
+  background: white;
+  border: 1px solid #ccc;
+  border-bottom: none;
+}
+
+.tab span { margin-right: 6px; }
+
+.tab .close { font-size: 12px; cursor: pointer; }
+
+.new-tab { padding: 5px 8px; cursor: pointer; font-weight: bold; font-size: 16px; }
+
+.window-controls {
+  display: flex;
+  gap: 4px;
+  margin-left: 8px;
+}
+
+.window-controls button {
+  width: 24px; height: 24px;
+  border: none; background: transparent; cursor: pointer;
+  font-size: 14px; display: flex; align-items: center; justify-content: center;
+}
+
+.window-controls button:hover { background: rgba(0,0,0,0.1); border-radius: 3px; }
+
+.time-display {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* Settings Panel */
+.settings-btn { margin-left: 10px; background:none;border:none;cursor:pointer;font-size:18px; }
+.settings-panel {
+  position:absolute; top:40px; right:10px;
+  background:#f8f9fa; border:1px solid #ccc; padding:15px;
+  border-radius:8px; box-shadow:2px 2px 10px rgba(0,0,0,0.2);
+  display:none; z-index:1000;
+}
+.settings-panel h3 { margin-top:0; }
+.setting-item { margin-bottom:10px; }
+
+/* Nav + Search */
+.nav-bar { display:flex; align-items:center; background:#f1f3f4; padding:5px; border-bottom:1px solid #ccc; }
+.nav-bar .nav-btn { background:none; border:none; cursor:pointer; margin-right:8px; font-size:16px; }
+.search-bar { flex:1; height:26px; padding:0 8px; border:1px solid #ccc; border-radius:14px; outline:none; }
+
+/* Bookmarks */
+.bookmarks { background:#f8f9fa; border-bottom:1px solid #ccc; padding:4px 8px; display:flex; gap:10px; align-items:center; }
+.bookmark {
+  display:flex; align-items:center; font-size:14px; cursor:pointer;
+  padding:6px 12px; border-radius:8px;
+  background:linear-gradient(145deg, #ffffff, #dcdcdc);
+  box-shadow:2px 2px 6px rgba(0,0,0,0.15), -2px -2px 6px #fff;
+  transition:all 0.2s ease-in-out;
+}
+.bookmark:hover { transform:translateY(-2px); box-shadow:4px 4px 8px rgba(0,0,0,0.2), -3px -3px 8px #fff; }
+
+/* Iframes */
+.iframe-container iframe { width:100%; height:calc(100vh - 110px); border:none; display:none; }
+.iframe-container iframe.active { display:block; }
+
